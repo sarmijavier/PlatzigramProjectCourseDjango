@@ -4,14 +4,29 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import  login_required
 from django.shortcuts import render, redirect
+from django.views.generic import DetailView
 #from django.db.utils import IntegrityError
 
 #Model
-#from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 #from users.models import Profile
 
 #forms
 from users.forms import ProfileForm, SignupForm
+
+
+
+
+class UserDetailView(DetailView):
+    """ User detail view. """
+
+    template_name = 'users/detail.html'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    queryset = User.objects.all()
+
+
+    
 
 @login_required
 def update_profile(request):
@@ -31,7 +46,7 @@ def update_profile(request):
             profile.save()
             #print(form.cleaned_data)
 
-            return redirect('update_profile')
+            return redirect('users:update')
     else:
         form = ProfileForm()
 
@@ -55,27 +70,29 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect('feed')
+            return redirect('posts:feed')
         else:
             return render(request, 'users/login.html', {'error': 'Invalid username and password'})
-    return render(request, 'users/login.html')
+
+            
+    return render(request,'users/login.html')
 
 
 @login_required
 def logout_view(request):
     """ Logout a user """
     logout(request)
-    return redirect('login')
+    return redirect('users:login')
 
 
 def signup(request):
-    """ Singup view """
+    """ Signup view """
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
 
-            return redirect('login')
+            return redirect('users:login')
     else:
         form = SignupForm()
     
@@ -84,3 +101,6 @@ def signup(request):
         template_name='users/signup.html',
         context={'form':form}
     )
+
+
+

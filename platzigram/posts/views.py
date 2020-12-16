@@ -59,7 +59,7 @@ def create_post(request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('feed')
+            return redirect('posts:feed')
     
     else: form = PostForm()#se retorna el form vacío
 
