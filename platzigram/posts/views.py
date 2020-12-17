@@ -3,6 +3,8 @@
 #Django 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 #Forms
 from posts.forms import PostForm
@@ -45,6 +47,16 @@ posts = [
     }
 ]
  """
+
+class PostsFeedView(LoginRequiredMixin, ListView):
+    """ Return all published posts. """
+
+    template_name = 'posts/feed.html'
+    model = Post
+    ordering = ('-create')
+    paginate_by = 1
+    context_object_name = 'posts'
+
 @login_required
 def list_posts(request):
     """ List existing posts. """
