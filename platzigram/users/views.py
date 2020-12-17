@@ -19,6 +19,25 @@ from users.forms import ProfileForm, SignupForm
 
 
 
+class PostDetailView(DetailView):
+    
+    template_name = 'users/detailpost.html'
+    slug_field = 'id' 
+    slug_url_kwarg = 'id' #<str:username> 
+    queryset = Post.objects.all()#Concatenar peticiones, cuando busca el objeto, usa es 
+    #query base para hacer más específio el query final
+    context_object_name = 'post' #nombre en el template
+    def get_context_data(self, **kwargs):
+        """ Add user's posts to context """
+        context = super().get_context_data(**kwargs)
+        post= self.get_object()
+        context['posts'] = Post.objects.get(id=post.id)
+        #import pdb; pdb.set_trace()
+
+        return context
+    
+
+
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     """ User detail view. """

@@ -5,9 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.urls import reverse
 #Forms
-from posts.forms import PostForm
+from posts.forms import PostForm, UpdatePostForm
 
 #Models
 from posts.models import Post
@@ -54,7 +54,7 @@ class PostsFeedView(LoginRequiredMixin, ListView):
     template_name = 'posts/feed.html'
     model = Post
     ordering = ('-create')
-    paginate_by = 1
+    #paginate_by = 1
     context_object_name = 'posts'
 
 @login_required
@@ -82,5 +82,35 @@ def create_post(request):
             'form': form,
             'user': request.user,
             'profile': request.user.profile
+        }
+    )
+
+
+def editPost(request, username, id):
+    print(username, id)
+    post = Post.objects.get(id=id)
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        form = UpdatePostForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            post.title = data['title']
+            post.save()
+
+            url = reverse('users:detail', kwargs={'username':request.user.username})
+            return redirect(url)
+    else: 
+        form = UpdatePostForm()
+    
+
+    return render(
+        request=request,
+        template_name='posts/editPost.html',
+        context={
+            'profile': profile,
+            'user': request.user,
+            'post': id,
+            'form':form
         }
     )

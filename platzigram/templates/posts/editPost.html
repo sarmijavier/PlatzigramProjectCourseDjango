@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head_content %}
+<title>Create new post</title>
+{% endblock %}
+
+{% block container %}
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-6 pt-3 pb-3" id="profile-box">
+            <h4 class="mb-4">Update Information</h4>
+
+            <form method="POST" enctype="multipart/form-data" action="{% url 'posts:edit' user post %}">
+                {% csrf_token %}
+
+                <input type="hidden" name="user" value="{{ user.pk}}" />
+                <input type="hidden" name="profile" value="{{ profile.pk }}" />
+
+                {# Title field #}
+                <div class="form-group">
+                    <input class="form-control {% if form.title.errors %}is-invalid{% endif %}" type="text" name="title"
+                        placeholder="Title">
+                    <div class="invalid-feedback">
+                        {% for error in form.title.errors %}{{ error }}{% endfor %}
+                    </div>
+                </div>
+
+                
+                <button type="submit" class="btn btn-primary btn-block mt-5">Update</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -19,4 +19,11 @@ urlpatterns = [
         view=views.create_post,
         name='create'
     ),
+
+    path(
+        route='<str:username>/<int:id>/',
+        view=views.editPost,
+        name='edit'
+    )
+
 ]

@@ -15,3 +15,13 @@ class PostForm(forms.ModelForm):
         """ Form settings """
         model = Post
         fields = ('user', 'profile', 'title', 'photo')
+
+
+
+class UpdatePostForm(forms.ModelForm):
+    """ Post model form. """
+
+    class Meta:
+        """ Form settings """
+        model = Post
+        fields = ('user', 'profile', 'title')
