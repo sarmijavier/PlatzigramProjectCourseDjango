@@ -3,9 +3,9 @@
 #Django 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
+from django.urls import reverse_lazy
 #Forms
 from posts.forms import PostForm, UpdatePostForm
 
@@ -13,7 +13,6 @@ from posts.forms import PostForm, UpdatePostForm
 from posts.models import Post
 
 """ 
-
 #utilities
 from datetime import datetime
 
@@ -54,8 +53,27 @@ class PostsFeedView(LoginRequiredMixin, ListView):
     template_name = 'posts/feed.html'
     model = Post
     ordering = ('-create')
-    #paginate_by = 1
+    paginate_by = 30
     context_object_name = 'posts'
+
+
+class CreatePostView(LoginRequiredMixin, CreateView):
+    """ Create a new post view """
+
+    template_name = 'posts/new.html'
+    form_class = PostForm
+    success_url = reverse_lazy('posts:feed')
+
+
+    def get_context_data(self, **kwargs):
+        """ Add user and profile to context. """
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['profile'] = self.request.user.profile
+
+
+        return context
+    
 
 @login_required
 def list_posts(request):
@@ -64,30 +82,8 @@ def list_posts(request):
     return render(request, 'posts/feed.html', {'posts': posts})
 
 
-@login_required
-def create_post(request):
-    """ Create new post view. """
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('posts:feed')
-    
-    else: form = PostForm()#se retorna el form vacío
-
-    return render(
-        request=request,
-        template_name='posts/new.html',
-        context={
-            'form': form,
-            'user': request.user,
-            'profile': request.user.profile
-        }
-    )
-
-
 def editPost(request, username, id):
-    print(username, id)
+    # print(username, id)
     post = Post.objects.get(id=id)
     profile = request.user.profile
 

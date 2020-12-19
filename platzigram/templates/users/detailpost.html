@@ -28,7 +28,12 @@
             <p class="ml-2 mt-0 mb-2">
                 <b>{{ post.title }}</b> - <small>{{ post.created }}</small>
             </p>
-            <a href="{% url 'posts:edit' post.user.username post.id %}" class="btn btn-primary stretched-link">Editar Titulo</a>
+            {% if post.user.username == user.username %}
+                <a href="{% url 'posts:edit' post.user.username post.id %}" class="btn btn-primary stretched-link">Editar Titulo</a>
+            {% else %}
+
+            {% endif %}
+
 
         </div>
     </div>
